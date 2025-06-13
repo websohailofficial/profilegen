@@ -1,0 +1,149 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Picture Maker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>📸 Profile Picture Maker</h1>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📤</div>
+            <div class="upload-text">Drop your photos here or click to browse</div>
+            <div class="upload-subtext">Supports JPG, PNG, WEBP files</div>
+        </div>
+        
+        <input type="file" id="fileInput" multiple accept="image/*">
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="quality">Quality:</label>
+                <select id="quality">
+                    <option value="0.9">High (90%)</option>
+                    <option value="0.8" selected>Good (80%)</option>
+                    <option value="0.7">Medium (70%)</option>
+                    <option value="0.6">Low (60%)</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="naming">File Naming:</label>
+                <select id="naming">
+                    <option value="original">Keep Original Names</option>
+                    <option value="custom">Custom Prefix + Numbers</option>
+                </select>
+            </div>
+            
+            <div class="control-group" id="prefixGroup" style="display: none;">
+                <label for="prefix">File Prefix:</label>
+                <input type="text" id="prefix" value="profile" placeholder="e.g., avatar, pic">
+            </div>
+            
+            <div class="control-group">
+                <label for="format">Output Format:</label>
+                <select id="format">
+                    <option value="jpeg">JPEG</option>
+                    <option value="png">PNG</option>
+                    <option value="webp">WebP</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="ratio">Aspect Ratio:</label>
+                <select id="ratio">
+                    <option value="4:5" selected>4:5</option>
+                    <option value="1:1">1:1 (Square)</option>
+                    <option value="4:3">4:3</option>
+                    <option value="16:9">16:9</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </div>
+            
+            <div class="control-group" id="customRatioGroup" style="display: none;">
+                <label>Custom Ratio:</label>
+                <input type="number" id="customWidthRatio" min="1" step="1" value="1" style="width: 60px;" placeholder="Width">
+                <span>:</span>
+                <input type="number" id="customHeightRatio" min="1" step="1" value="1" style="width: 60px;" placeholder="Height">
+            </div>
+            
+            <div class="control-group" style="flex-direction: column; width: 100%;">
+                <label for="zoom">Zoom Level:</label>
+                <div class="zoom-control">
+                    <input type="range" id="zoom" class="zoom-slider" min="1" max="3" step="0.1" value="1">
+                    <input type="number" id="zoomValue" class="zoom-value" min="1" max="3" step="0.1" value="1.0" style="width: 60px;">
+                </div>
+            </div>
+            
+            <button class="btn" id="processBtn" disabled>🎨 Create Profile Pictures</button>
+        </div>
+        
+        <div class="progress-bar" id="progressBar" style="display: none;">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="status" id="status"></div>
+        
+        <div class="gallery" id="gallery"></div>
+        
+        <div class="download-area" id="downloadArea" style="display: none;">
+            <h3>🎉 Profile Pictures Ready!</h3>
+            <p>Your cropped and customized profile pictures are ready for download.</p>
+            <button class="btn" id="downloadAllBtn">📦 Download All as ZIP</button>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <span class="modal-close" id="modalClose">×</span>
+            <h2>Edit Profile Picture</h2>
+            <img id="modalPreview" class="modal-preview" src="" alt="Preview">
+            <div class="modal-controls">
+                <div class="control-group">
+                    <label for="modalZoom">Zoom Level:</label>
+                    <div class="zoom-control">
+                        <input type="range" id="modalZoom" class="zoom-slider" min="1" max="3" step="0.1" value="1">
+                        <input type="number" id="modalZoomValue" class="zoom-value" min="1" max="3" step="0.1" value="1.0" style="width: 60px;">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="modalPosition">Position Preset:</label>
+                    <select id="modalPosition">
+                        <option value="center">Center</option>
+                        <option value="top-center">Top Center</option>
+                        <option value="bottom-center">Bottom Center</option>
+                        <option value="left-center">Left Center</option>
+                        <option value="right-center">Right Center</option>
+                        <option value="top-left">Top Left</option>
+                        <option value="top-right">Top Right</option>
+                        <option value="bottom-left">Bottom Left</option>
+                        <option value="bottom-right">Bottom Right</option>
+                    </select>
+                </div>
+                <!-- Vertical Control group -->
+                <div class="control-group">
+                    <label for="modalPositionY">Vertical Position:</label>
+                    <div class="position-control">
+                        <input type="range" id="modalPositionY" class="position-slider" min="-100" max="100" step="1" value="0">
+                        <input type="number" id="modalPositionYValue" class="position-value" min="-100" max="100" step="1" value="0" style="width: 60px;">
+                    </div>
+                </div>
+                <!-- Horizontal Control room -->
+                <div class="control-group">
+                    <label for="modalPositionX">Horizontal Position:</label>
+                    <div class="position-control">
+                        <input type="range" id="modalPositionX" class="position-slider" min="-100" max="100" step="1" value="0">
+                        <input type="number" id="modalPositionXValue" class="position-value" min="-100" max="100" step="1" value="0" style="width: 60px;">
+                    </div>
+                </div>
+                <button class="btn" id="saveEditBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jszip.min.js"></script>
+    <script src="/js/face-api.min.js"></script>
+    <script src="/js/script.js"></script>
+</body>
+</html>
