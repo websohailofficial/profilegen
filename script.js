@@ -23,6 +23,7 @@ const ratioSelect = document.getElementById('ratio');
 const customRatioGroup = document.getElementById('customRatioGroup');
 const customWidthRatio = document.getElementById('customWidthRatio');
 const customHeightRatio = document.getElementById('customHeightRatio');
+const compressToggle = document.getElementById('compress');
 
 // Modal elements
 const editModal = document.getElementById('editModal');
@@ -191,6 +192,7 @@ async function processImages() {
 
     const quality = parseFloat(document.getElementById('quality').value);
     const maxSize = parseInt(document.getElementById('maxSize').value) * 1024;
+    const shouldCompress = compressToggle.checked;
     const namingOption = document.getElementById('naming').value;
     const prefix = document.getElementById('prefix').value || 'profile';
     const format = document.getElementById('format').value;
@@ -210,7 +212,9 @@ async function processImages() {
         status.textContent = `Processing image ${i + 1} of ${selectedFiles.length}...`;
 
         try {
-            const croppedBlob = await compressImage(file, quality, format, ratio, zoom, 'center', 0, 0, maxSize);
+            const croppedBlob = shouldCompress 
+                ? await compressImage(file, quality, format, ratio, zoom, 'center', 0, 0, maxSize)
+                : await cropImage(file, quality, format, ratio, zoom, 'center', 0, 0);
             let newFileName;
             
             if (namingOption === 'original') {
@@ -573,19 +577,31 @@ const updatePreview = debounce(async () => {
     const imageData = processedImages[currentEditIndex];
     const newZoom = parseFloat(modalZoom.value);
     const newPosition = modalPosition.value;
+    const shouldCompress = compressToggle.checked;
 
     try {
-        const newBlob = await compressImage(
-            imageData.file,
-            imageData.quality,
-            imageData.format,
-            imageData.ratio,
-            newZoom,
-            newPosition,
-            positionX,
-            positionY,
-            imageData.maxSize
-        );
+        const newBlob = shouldCompress 
+            ? await compressImage(
+                imageData.file,
+                imageData.quality,
+                imageData.format,
+                imageData.ratio,
+                newZoom,
+                newPosition,
+                positionX,
+                positionY,
+                imageData.maxSize
+              )
+            : await cropImage(
+                imageData.file,
+                imageData.quality,
+                imageData.format,
+                imageData.ratio,
+                newZoom,
+                newPosition,
+                positionX,
+                positionY
+              );
         modalPreview.src = URL.createObjectURL(newBlob);
         tempBlob = newBlob;
     } catch (error) {
