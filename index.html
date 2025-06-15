@@ -28,6 +28,11 @@
             </div>
             
             <div class="control-group">
+                <label for="maxSize">Max File Size (KB):</label>
+                <input type="number" id="maxSize" min="10" step="10" value="500" style="width: 100px;" placeholder="e.g., 500">
+            </div>
+            
+            <div class="control-group">
                 <label for="naming">File Naming:</label>
                 <select id="naming">
                     <option value="original">Keep Original Names</option>
@@ -76,6 +81,7 @@
             </div>
             
             <button class="btn" id="processBtn" disabled>🎨 Create Profile Pictures</button>
+            <button class="btn" id="clearBtn">🗑️ Clear All Images</button>
         </div>
         
         <div class="progress-bar" id="progressBar" style="display: none;">
@@ -121,7 +127,6 @@
                         <option value="bottom-right">Bottom Right</option>
                     </select>
                 </div>
-                <!-- Vertical Control group -->
                 <div class="control-group">
                     <label for="modalPositionY">Vertical Position:</label>
                     <div class="position-control">
@@ -129,7 +134,6 @@
                         <input type="number" id="modalPositionYValue" class="position-value" min="-100" max="100" step="1" value="0" style="width: 60px;">
                     </div>
                 </div>
-                <!-- Horizontal Control room -->
                 <div class="control-group">
                     <label for="modalPositionX">Horizontal Position:</label>
                     <div class="position-control">
